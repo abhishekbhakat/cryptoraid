@@ -32,10 +32,16 @@ class Trader():
             for i in range(len(response)):
                 if response[i]['market'] == self.config['main']['target_symbol'] + self.config['main']['source_symbol']:
                     self.ticker_id = i
+                    
                     break
         if self.ticker_id < 0:
             logging.error("Invalid Target symbol and Source symbol. Check configurations.")
             sys.exit()
+        for key in response[self.ticker_id]:
+            try:
+                response[self.ticker_id][key] = float(response[self.ticker_id][key])
+            except:
+                logging.debug("Non float value.")
         return response[self.ticker_id]
 
     def init_wallet(self):
@@ -49,8 +55,10 @@ class Trader():
         for i in response:
             if i['currency'] == self.config['main']['target_symbol'] :
                 self.wallet.target_balance = i
+                self.wallet.target_balance['balance'] = float(self.wallet.target_balance['balance'])
             if i['currency'] == self.config['main']['source_symbol'] :
                 self.wallet.source_balance = i
+                self.wallet.source_balance['balance'] = float(self.wallet.source_balance['balance'])
         
         logging.info("Source balance: {}".format(self.wallet.source_balance))
         logging.info("Target balance: {}".format(self.wallet.target_balance))
@@ -58,12 +66,46 @@ class Trader():
         print("Decide the paddle source_amount. (Suggested to refer previous transactions)")
         ticker = self.ticker()
         pprint(ticker)
-        print("Estimated source funds = {}".format(float(self.wallet.target_balance['balance']) * float(ticker['last_price']) + float(self.wallet.source_balance['balance']) ))
+        print("Estimated source funds = {}".format(self.wallet.target_balance['balance'] * ticker['last_price'] + self.wallet.source_balance['balance'] ))
         choice = input("Auto decide depending on current balances ? (yN)")
         if choice.upper() in ['Y', 'YES']:
             logging.warn("Feature not yet implemented.")
         print("First 2 paddles are for spot trading. May include a little risk but higher the investment higher the profit. 3rd paddle is to sit for riding the wave.")
         print("Suggested Application is to start from small paddles for spot trading.")
-        paddle1 = paddle2 =  float(input("Amount for spot trade (each paddle) in " + self.config['main']['source_symbol'] + ": "))
+        paddle = float(input("Amount for spot trade (each paddle) in " + self.config['main']['source_symbol'] + ": "))
+        start = 1
+        if paddle < self.wallet.source_balance['balance']:
+            choice = input("Start by ? (BUY/sell)")
+            if choice.upper() in ['SELL', 'S']:
+                start = -1
+        else:
+            start = -1
+        # 1 means start by buying ; -1 means start by sell
+        if start == -1:
+            ticker = self.ticker()
+            self.wallet.paddle_1["previous"] = {}
+            self.wallet.paddle_1["current"] = {}
+            self.wallet.paddle_1["current"][self.config['main']['target_symbol']] = paddle / ticker['last_price']
+            self.wallet.paddle_1["current"][self.config['main']['source_symbol']] = paddle
+            
+            self.wallet.paddle_2["previous"] = {}
+            self.wallet.paddle_2["current"] = {}
+            self.wallet.paddle_2["current"][self.config['main']['target_symbol']] = paddle / ticker['last_price']
+            self.wallet.paddle_2["current"][self.config['main']['source_symbol']] = paddle
+
+        else:
+            ticker = self.ticker()
+            self.wallet.paddle_1["previous"] = {}
+            self.wallet.paddle_1["current"] = {}
+            self.wallet.paddle_1["current"][self.config['main']['target_symbol']] = paddle / ticker['last_price']
+            self.wallet.paddle_1["current"][self.config['main']['source_symbol']] = paddle
+
+            self.wallet.paddle_2["previous"] = {}
+            self.wallet.paddle_2["current"] = {}
+
+        
+
+        logging.info("Wallet initialize completed")
+        return
         
 
