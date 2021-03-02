@@ -1,19 +1,17 @@
-from api_lib.wallet import Wallet
 from api_lib.trader import Trader
-from api_lib.wallet import Wallet
-from api_lib.dcx_requests import dcx_get, dcx_post
 import time
-from pprint import pprint 
+from art import *
+import logging
 
+logging.basicConfig(level=logging.INFO)
+welcome = text2art("Cryptoraid v0.1.0")
 
-
-# init trader
+logging.info("\n{}".format(welcome))
+logging.info("Creating a trading agent.")
 trader_1 = Trader("config.ini")
-trader_1.wallet = Wallet()
 
 # singleton infinite loop
+logging.info("Watcher init")
 while True:
     # solution strategy
-    pprint(dcx_get(trader_1.config['public']['public_base_url']))
-
-    time.sleep(5)
+    time.sleep(int(trader_1.config['main']['interval']))
