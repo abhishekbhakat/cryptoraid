@@ -1,4 +1,4 @@
-# PY-CRYPTO TRADER
+# CryptoRaid
 
 ## API KEY
 Generate api key from coin dcx account settings.
@@ -53,3 +53,10 @@ Generate api key from coin dcx account settings.
   - rejected: order is rejected (not placed on the exchange)
   - partially_cancelled: order is partially cancelled
   - untriggered: stop varinat order was not triggered
+
+## TODO
+- [x] create trading agent
+- [x] wallet initialize
+- [ ] minimum transaction amount of source
+- [ ] auto calculate paddle amount.
+- [ ] paddle strategy grooming
