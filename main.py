@@ -30,7 +30,7 @@ while True:
             trader.wallet.paddle_1['current'][trader.config['main']['source_symbol']] = order['avg_price']
         # Sell paddle_2
         ticker = trader.ticker()
-        while trader.profit(trader.wallet.paddle_2['current'][trader.config['main']['target_symbol']]) < trader.config['main']['profit'] :
+        while trader.profit(trader.wallet.paddle_2['current'][trader.config['main']['target_symbol']]) < float(trader.config['main']['profit']) :
             time.sleep(int(trader.config['main']['interval']))
             ticker = trader.ticker()
         else:
@@ -52,7 +52,7 @@ while True:
             trader.wallet.paddle_2['current'][trader.config['main']['source_symbol']] = order['avg_price']
         # Sell paddle_1
         ticker = trader.ticker()
-        while trader.profit(trader.wallet.paddle_1['current'][trader.config['main']['target_symbol']]) < trader.config['main']['profit'] :
+        while trader.profit(trader.wallet.paddle_1['current'][trader.config['main']['target_symbol']]) < float(trader.config['main']['profit']) :
             time.sleep(int(trader.config['main']['interval']))
             ticker = trader.ticker()
         else:
@@ -71,7 +71,7 @@ while True:
 
     else:
         print("Appx. profit = {}".format(trader.profit(trader.wallet.paddle_1['current'][trader.config['main']['target_symbol']])))
-        if trader.profit(trader.wallet.paddle_1['current'][trader.config['main']['target_symbol']]) > trader.config['main']['profit'] :
+        if trader.profit(trader.wallet.paddle_1['current'][trader.config['main']['target_symbol']]) > float(trader.config['main']['profit']) :
             ticker = trader.rising_trend()
             print("CAN SELL PADDLE 1")
             order = trader.sell(trader.wallet.paddle_1['current'][trader.config['main']['target_symbol']])
@@ -79,7 +79,7 @@ while True:
             trader.wallet.paddle_1['previous'][trader.config['main']['source_symbol']] = order['avg_price']
             trader.wallet.paddle_1['current'] = {}
 
-        elif trader.profit(trader.wallet.paddle_2['current'][trader.config['main']['target_symbol']]) > trader.config['main']['profit']:
+        elif trader.profit(trader.wallet.paddle_2['current'][trader.config['main']['target_symbol']]) > float(trader.config['main']['profit']):
             ticker = trader.rising_trend()
             print("CAN SELL PADDLE 2")
             order = trader.sell(trader.wallet.paddle_2['current'][trader.config['main']['target_symbol']])
