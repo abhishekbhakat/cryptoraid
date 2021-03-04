@@ -59,4 +59,6 @@ Generate api key from coin dcx account settings.
 - [x] wallet initialize
 - [ ] minimum transaction amount of source
 - [ ] auto calculate paddle amount.
-- [ ] paddle strategy grooming
+- [x] paddle strategy grooming
+- [ ] auto detect rising trend while buying to buy quickly
+
