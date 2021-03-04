@@ -26,7 +26,7 @@ class Trader():
         return signature
     
     def ticker(self):
-        ticker_url = ''.join(self.config['public']['public_base_url'],self.config['public']['ticker'])
+        ticker_url = self.config['public']['public_base_url'] + self.config['public']['ticker']
         response = dcx_get(ticker_url)
         if self.ticker_id < 0:
             for i in range(len(response)):
@@ -43,11 +43,36 @@ class Trader():
             except:
                 logging.debug("Non float value.")
         return response[self.ticker_id]
+    
+    def falling_trend(self):
+        logging.info("Falling trend with {}secs interval".format(self.config['main']['trend']))
+        ticker_old = self.ticker()
+        # Sleeping for 5 secs just for heads up
+        time.sleep(5)
+        while True:
+            ticker_new = self.ticker()
+            if ticker_new['last_price'] > ticker_old['last_price']:
+                return ticker_new
+            time.sleep(int(self.config['main']['trend']))
+            ticker_old = ticker_new
+    
+    def rising_trend(self):
+        logging.info("Rising trend with {}secs interval".format(self.config['main']['trend']))
+        ticker_old = self.ticker()
+        # Sleeping for 5 secs just for heads up
+        time.sleep(5)
+        while True:
+            ticker_new = self.ticker()
+            if ticker_new['last_price'] < ticker_old['last_price']:
+                return ticker_new
+            time.sleep(int(self.config['main']['trend']))
+            ticker_old = ticker_new
+
 
     def init_wallet(self):
         # Total money source
         # Total money target
-        balance_url = ''.join(self.config['individual']['base_url'],self.config['individual']['balances'])
+        balance_url = self.config['individual']['base_url'] + self.config['individual']['balances']
         timeStamp = int(round(time.time() * 1000))
         body = {"timestamp" : timeStamp}
         json_body = json.dumps(body, separators = (',', ':'))
@@ -82,32 +107,37 @@ class Trader():
             start = -1
         # 1 means start by buying ; -1 means start by sell
         if start == -1:
-            ticker = self.ticker()
+            ticker = self.falling_trend()
             self.wallet.paddle_1["previous"] = {}
             self.wallet.paddle_1["current"] = {}
             self.wallet.paddle_1["current"][self.config['main']['target_symbol']] = self.paddle / ticker['last_price']
-            self.wallet.paddle_1["current"][self.config['main']['source_symbol']] = self.paddle
+            self.wallet.paddle_1["current"][self.config['main']['source_symbol']] = ticker['last_price']
             
             self.wallet.paddle_2["previous"] = {}
             self.wallet.paddle_2["current"] = {}
             self.wallet.paddle_2["current"][self.config['main']['target_symbol']] = self.paddle / ticker['last_price']
-            self.wallet.paddle_2["current"][self.config['main']['source_symbol']] = self.paddle
+            self.wallet.paddle_2["current"][self.config['main']['source_symbol']] = ticker['last_price']
 
         else:
-            ticker = self.ticker()
+            ticker = self.falling_trend()
             self.wallet.paddle_1["previous"] = {}
             self.wallet.paddle_1["current"] = {}
             self.wallet.paddle_1["current"][self.config['main']['target_symbol']] = self.paddle / ticker['last_price']
-            self.wallet.paddle_1["current"][self.config['main']['source_symbol']] = self.paddle
+            self.wallet.paddle_1["current"][self.config['main']['source_symbol']] = ticker['last_price']
 
             self.wallet.paddle_2["previous"] = {}
             self.wallet.paddle_2["current"] = {}
+        
+        print("Paddle 1:")
+        pprint(self.wallet.paddle_1)
+        print("Paddle 2:")
+        pprint(self.wallet.paddle_1)
 
         logging.info("Wallet initialize completed")
         return
     
     def order_status(self, id):
-        status_url = ''.join(self.config['individual']['base_url'],self.config['individual']['status'])
+        status_url = self.config['individual']['base_url'] + self.config['individual']['status']
         timeStamp = int(round(time.time() * 1000))
         body = {
             "id": id,
@@ -118,13 +148,13 @@ class Trader():
         return response['status']
 
     def buy(self):
-        buy_url = ''.join(self.config['individual']['base_url'],self.config['individual']['create_order'])
+        buy_url = self.config['individual']['base_url'] + self.config['individual']['create_order']
         timeStamp = int(round(time.time() * 1000))
         ticker = self.ticker()
         body = {
             "side": "buy",    #Toggle between 'buy' or 'sell'.
             "order_type": "market_order", #Toggle between a 'market_order' or 'limit_order'.
-            "market": ''.join(self.config['main']['target_symbol'],self.config['main']['source_symbol']), #Replace 'SNTBTC' with your desired market pair.
+            "market": self.config['main']['target_symbol'] + self.config['main']['source_symbol'], #Replace 'SNTBTC' with your desired market pair.
             "total_quantity": self.paddle / ticker['last_price'], #Replace this with the quantity you want
             "timestamp": timeStamp
         }
@@ -141,13 +171,13 @@ class Trader():
         return order_id
 
     def sell(self):
-        sell_url = ''.join(self.config['individual']['base_url'],self.config['individual']['create_order'])
+        sell_url = self.config['individual']['base_url'] + self.config['individual']['create_order']
         timeStamp = int(round(time.time() * 1000))
         ticker = self.ticker()
         body = {
             "side": "sell",    #Toggle between 'buy' or 'sell'.
             "order_type": "market_order", #Toggle between a 'market_order' or 'limit_order'.
-            "market": ''.join(self.config['main']['target_symbol'],self.config['main']['source_symbol']), #Replace 'SNTBTC' with your desired market pair.
+            "market": self.config['main']['target_symbol'] + self.config['main']['source_symbol'], #Replace 'SNTBTC' with your desired market pair.
             "total_quantity": self.paddle / ticker['last_price'], #Replace this with the quantity you want
             "timestamp": timeStamp
         }
