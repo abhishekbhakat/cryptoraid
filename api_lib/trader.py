@@ -47,10 +47,12 @@ class Trader():
     def falling_trend(self):
         logging.info("Falling trend with {}secs interval".format(self.config['main']['trend']))
         ticker_old = self.ticker()
+        print("LIVE: {}".format(ticker_old['last_price']))
         # Sleeping for 5 secs just for heads up
-        time.sleep(5)
+        time.sleep(int(self.config['main']['trend']))
         while True:
             ticker_new = self.ticker()
+            print("LIVE: {}".format(ticker_new['last_price']))
             if ticker_new['last_price'] > ticker_old['last_price']:
                 return ticker_new
             time.sleep(int(self.config['main']['trend']))
@@ -59,10 +61,12 @@ class Trader():
     def rising_trend(self):
         logging.info("Rising trend with {}secs interval".format(self.config['main']['trend']))
         ticker_old = self.ticker()
+        print("LIVE: {}".format(ticker_old['last_price']))
         # Sleeping for 5 secs just for heads up
-        time.sleep(5)
+        time.sleep(int(self.config['main']['trend']))
         while True:
             ticker_new = self.ticker()
+            print("LIVE: {}".format(ticker_new['last_price']))
             if ticker_new['last_price'] < ticker_old['last_price']:
                 return ticker_new
             time.sleep(int(self.config['main']['trend']))
@@ -92,12 +96,18 @@ class Trader():
         ticker = self.ticker()
         # pprint(ticker)
         print("Estimated source funds = {}".format(self.wallet.target_balance['balance'] * ticker['last_price'] + self.wallet.source_balance['balance'] ))
-        choice = input("Auto decide depending on current balances ? (yN)")
-        if choice.upper() in ['Y', 'YES']:
-            logging.warn("Feature not yet implemented.")
+        # choice = input("Auto decide depending on current balances ? (yN)")
+        # if choice.upper() in ['Y', 'YES']:
+        #     logging.warn("Feature not yet implemented.")
         print("First 2 paddles are for spot trading. May include a little risk but higher the investment higher the profit. 3rd paddle is to sit for riding the wave.")
         print("Suggested Application is to start from small paddles for spot trading.")
-        self.paddle = float(input("Amount for spot trade (each paddle) in " + self.config['main']['source_symbol'] + ": "))
+        try:
+            self.paddle = float(input("Amount for spot trade (each paddle) in " + self.config['main']['source_symbol'] + ": "))
+        except Exception as e:
+            logging.error(e)
+            logging.info("Wallet initialization restarted.")
+            self.init_wallet()
+            pass
         start = 1
         if self.paddle < self.wallet.source_balance['balance']:
             choice = input("Start by ? (BUY/sell)")
@@ -170,7 +180,7 @@ class Trader():
         logging.info("BUY : {}".format(order_id))
         return order_id
 
-    def sell(self):
+    def sell(self,quantity):
         sell_url = self.config['individual']['base_url'] + self.config['individual']['create_order']
         timeStamp = int(round(time.time() * 1000))
         ticker = self.ticker()
@@ -178,7 +188,7 @@ class Trader():
             "side": "sell",    #Toggle between 'buy' or 'sell'.
             "order_type": "market_order", #Toggle between a 'market_order' or 'limit_order'.
             "market": self.config['main']['target_symbol'] + self.config['main']['source_symbol'], #Replace 'SNTBTC' with your desired market pair.
-            "total_quantity": self.paddle / ticker['last_price'], #Replace this with the quantity you want
+            "total_quantity": quantity, #Replace this with the quantity you want
             "timestamp": timeStamp
         }
         json_body = json.dumps(body, separators = (',', ':'))
@@ -192,3 +202,12 @@ class Trader():
             return
         logging.info("SELL : {}".format(order_id))
         return order_id
+    
+    def profit(self, selling):
+        ticker = self.ticker()
+        profit = ticker['last_price'] * selling - self.paddle - self.paddle * float(self.config['main']['fee']) / 100
+        return profit
+
+    def sudo_profit(self, prev_qty, prev_ticker):
+        sudo_ticker = (prev_qty * prev_ticker - float(self.config['main']['profit']) - self.paddle * float(self.config['main']['fee']) / 100) / prev_qty
+        return sudo_ticker
