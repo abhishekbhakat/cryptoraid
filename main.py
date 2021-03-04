@@ -2,7 +2,6 @@ from api_lib.trader import Trader
 import time
 from art import *
 import logging
-from datetime import timedelta
 
 logging.basicConfig(level=logging.INFO)
 welcome = text2art("Cryptoraid v0.1.0")

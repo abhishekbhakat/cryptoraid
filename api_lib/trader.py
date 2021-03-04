@@ -5,6 +5,7 @@ from api_lib.dcx_requests import dcx_get, dcx_post
 from pprint import pprint 
 import logging
 import sys
+from api_lib.precision import round_down, round_up
 
 class Trader():
 
@@ -165,11 +166,12 @@ class Trader():
             "side": "buy",    #Toggle between 'buy' or 'sell'.
             "order_type": "market_order", #Toggle between a 'market_order' or 'limit_order'.
             "market": self.config['main']['target_symbol'] + self.config['main']['source_symbol'], #Replace 'SNTBTC' with your desired market pair.
-            "total_quantity": self.paddle / ticker['last_price'], #Replace this with the quantity you want
+            "total_quantity": round_up(self.paddle / ticker['last_price'], 5), #Replace this with the quantity you want
             "timestamp": timeStamp
         }
         json_body = json.dumps(body, separators = (',', ':'))
         response = dcx_post(buy_url, self.key, self.xauth_sign(json_body), json_body)
+        logging.info("DCX : {}".format(json.dumps(response)))
         order_id = response['orders'][0]['id']
         status = self.order_status(order_id)
         while status not in ['filled','rejected']:            
@@ -188,11 +190,12 @@ class Trader():
             "side": "sell",    #Toggle between 'buy' or 'sell'.
             "order_type": "market_order", #Toggle between a 'market_order' or 'limit_order'.
             "market": self.config['main']['target_symbol'] + self.config['main']['source_symbol'], #Replace 'SNTBTC' with your desired market pair.
-            "total_quantity": quantity, #Replace this with the quantity you want
+            "total_quantity": round_down(quantity,5), #Replace this with the quantity you want
             "timestamp": timeStamp
         }
         json_body = json.dumps(body, separators = (',', ':'))
         response = dcx_post(sell_url, self.key, self.xauth_sign(json_body), json_body)
+        logging.info("DCX : {}".format(json.dumps(response)))
         order_id = response['orders'][0]['id']
         status = self.order_status(order_id)
         while status not in ['filled','rejected']:            
