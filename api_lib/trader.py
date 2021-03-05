@@ -146,7 +146,7 @@ class Trader():
         logging.info("Wallet initialize completed")
         return
     
-    def order_status(self, id):
+    def get_order(self, id):
         status_url = self.config['individual']['base_url'] + self.config['individual']['status']
         timeStamp = int(round(time.time() * 1000))
         body = {
@@ -156,7 +156,7 @@ class Trader():
         json_body = json.dumps(body, separators = (',', ':'))
         response = dcx_post(status_url, self.key, self.xauth_sign(json_body), json_body)
         logging.info("DCX : {}".format(json.dumps(response)))
-        return response['status']
+        return response
 
     def buy(self):
         buy_url = self.config['individual']['base_url'] + self.config['individual']['create_order']
@@ -173,15 +173,15 @@ class Trader():
         response = dcx_post(buy_url, self.key, self.xauth_sign(json_body), json_body)
         logging.info("DCX : {}".format(json.dumps(response)))
         order_id = response['orders'][0]['id']
-        status = self.order_status(order_id)
+        status = self.get_order(order_id)['status']
         while status not in ['filled','rejected']:            
             time.sleep(1)
-            status = self.order_status(order_id)
+            status = self.get_order(order_id)['status']
         if status == 'rejected':
             self.buy()
             return
         logging.info("BUY : {}".format(order_id))
-        return order_id
+        return self.get_order(order_id)
 
     def sell(self,quantity):
         sell_url = self.config['individual']['base_url'] + self.config['individual']['create_order']
@@ -198,15 +198,15 @@ class Trader():
         response = dcx_post(sell_url, self.key, self.xauth_sign(json_body), json_body)
         logging.info("DCX : {}".format(json.dumps(response)))
         order_id = response['orders'][0]['id']
-        status = self.order_status(order_id)
+        status = self.get_order(order_id)['status']
         while status not in ['filled','rejected']:            
             time.sleep(1)
-            status = self.order_status(order_id)
+            status = self.get_order(order_id)['status']
         if status == 'rejected':
             self.sell()
             return
         logging.info("SELL : {}".format(order_id))
-        return order_id
+        return self.get_order(order_id)
     
     def profit(self, selling):
         ticker = self.ticker()
