@@ -1,3 +1,4 @@
+from pprint import pprint
 from api_lib.trader import Trader
 import time
 from art import *
@@ -19,8 +20,10 @@ while True:
     print("LIVE : {}".format(ticker['last_price']))
     if trader.wallet.paddle_1['current'] == {} and trader.wallet.paddle_2['current'] != {}:
         logging.info("Buying Paddle 1")
+        pprint(trader.wallet.paddle_1)
         if trader.wallet.paddle_1['previous'] != {}:
-            while ticker['last_price'] > trader.sudo_profit(trader.wallet.paddle_1['previous']['target_symbol'], trader.wallet.paddle_1['previous']['source_symbol']) :
+            while ticker['last_price'] > trader.sudo_profit(trader.wallet.paddle_1['previous'][trader.config['main']['target_symbol']], trader.wallet.paddle_1['previous'][trader.config['main']['target_symbol']]) :
+                logging.info("sleeping for {}".format(int(trader.config['main']['interval'])))
                 time.sleep(int(trader.config['main']['interval']))
                 ticker = trader.ticker()
             else:
@@ -35,8 +38,10 @@ while True:
             trader.wallet.paddle_1['current'][trader.config['main']['source_symbol']] = order['avg_price']
 
         logging.info("Selling paddle 2")
+        pprint(trader.wallet.paddle_2)
         ticker = trader.ticker()
         while trader.profit(trader.wallet.paddle_2['current'][trader.config['main']['target_symbol']]) < float(trader.config['main']['profit']) :
+            logging.info("sleeping for {}".format(int(trader.config['main']['interval'])))
             time.sleep(int(trader.config['main']['interval']))
             ticker = trader.ticker()
         else:
@@ -48,8 +53,10 @@ while True:
 
     elif trader.wallet.paddle_2['current'] == {} and trader.wallet.paddle_1['current'] != {}:
         logging.info("Buying Paddle 2")
+        pprint(trader.wallet.paddle_2)
         if trader.wallet.paddle_1['previous'] != {}:
-            while ticker['last_price'] > trader.sudo_profit(trader.wallet.paddle_2['previous']['target_symbol'], trader.wallet.paddle_2['previous']['source_symbol']) :
+            while ticker['last_price'] > trader.sudo_profit(trader.wallet.paddle_2['previous'][trader.config['main']['target_symbol']], trader.wallet.paddle_2['previous']['source_symbol']) :
+                logging.info("sleeping for {}".format(int(trader.config['main']['interval'])))
                 time.sleep(int(trader.config['main']['interval']))
                 ticker = trader.ticker()
             else:
@@ -63,8 +70,10 @@ while True:
             trader.wallet.paddle_2['current'][trader.config['main']['target_symbol']] = order['total_quantity']
             trader.wallet.paddle_2['current'][trader.config['main']['source_symbol']] = order['avg_price']
         logging.info("Selling Paddle 1")
+        pprint(trader.wallet.paddle_1)
         ticker = trader.ticker()
         while trader.profit(trader.wallet.paddle_1['current'][trader.config['main']['target_symbol']]) < float(trader.config['main']['profit']) :
+            logging.info("sleeping for {}".format(int(trader.config['main']['interval'])))
             time.sleep(int(trader.config['main']['interval']))
             ticker = trader.ticker()
         else:
@@ -76,6 +85,7 @@ while True:
 
     elif trader.wallet.paddle_1['current'] == {} and trader.wallet.paddle_2['current'] == {}:
         logging.info("Buying Paddle 1")
+        pprint(trader.wallet.paddle_1)
         ticker = trader.falling_trend()
         order = trader.buy()
         trader.wallet.paddle_1['current'][trader.config['main']['target_symbol']] = order['total_quantity']
@@ -86,6 +96,7 @@ while True:
         if trader.profit(trader.wallet.paddle_1['current'][trader.config['main']['target_symbol']]) > float(trader.config['main']['profit']) :
             ticker = trader.rising_trend()
             logging.info("Selling Paddle 1")
+            pprint(trader.wallet.paddle_1)
             order = trader.sell(trader.wallet.paddle_1['current'][trader.config['main']['target_symbol']])
             trader.wallet.paddle_1['previous'][trader.config['main']['target_symbol']] = order['total_quantity']
             trader.wallet.paddle_1['previous'][trader.config['main']['source_symbol']] = order['avg_price']
@@ -94,9 +105,10 @@ while True:
         elif trader.profit(trader.wallet.paddle_2['current'][trader.config['main']['target_symbol']]) > float(trader.config['main']['profit']):
             ticker = trader.rising_trend()
             logging.info("Selling Paddle 1")
+            pprint(trader.wallet.paddle_1)
             order = trader.sell(trader.wallet.paddle_2['current'][trader.config['main']['target_symbol']])
             trader.wallet.paddle_2['previous'][trader.config['main']['target_symbol']] = order['total_quantity']
             trader.wallet.paddle_2['previous'][trader.config['main']['source_symbol']] = order['avg_price']
             trader.wallet.paddle_2['current'] = {}
-        
+    logging.info("sleeping for {}".format(int(trader.config['main']['interval'])))   
     time.sleep(int(trader.config['main']['interval']))

@@ -51,12 +51,14 @@ class Trader():
         ticker_old = self.ticker()
         print("LIVE: {}".format(ticker_old['last_price']))
         # Sleeping for 5 secs just for heads up
+        logging.info("sleeping for {}".format(int(self.config['main']['trend'])))
         time.sleep(int(self.config['main']['trend']))
         while True:
             ticker_new = self.ticker()
             print("LIVE: {}".format(ticker_new['last_price']))
             if ticker_new['last_price'] > ticker_old['last_price']:
                 return ticker_new
+            logging.info("sleeping for {}".format(int(self.config['main']['trend'])))
             time.sleep(int(self.config['main']['trend']))
             ticker_old = ticker_new
     
@@ -65,12 +67,14 @@ class Trader():
         ticker_old = self.ticker()
         print("LIVE: {}".format(ticker_old['last_price']))
         # Sleeping for 5 secs just for heads up
+        logging.info("sleeping for {}".format(int(self.config['main']['trend'])))
         time.sleep(int(self.config['main']['trend']))
         while True:
             ticker_new = self.ticker()
             print("LIVE: {}".format(ticker_new['last_price']))
             if ticker_new['last_price'] < ticker_old['last_price']:
                 return ticker_new
+            logging.info("sleeping for {}".format(int(self.config['main']['trend'])))
             time.sleep(int(self.config['main']['trend']))
             ticker_old = ticker_new
 
