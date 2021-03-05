@@ -48,9 +48,15 @@ while True:
 
     elif trader.wallet.paddle_2['current'] == {} and trader.wallet.paddle_1['current'] != {}:
         logging.info("Buying Paddle 2")
-        while ticker['last_price'] > trader.sudo_profit(trader.wallet.paddle_2['previous']['target_symbol'], trader.wallet.paddle_2['previous']['source_symbol']) :
-            time.sleep(int(trader.config['main']['interval']))
-            ticker = trader.ticker()
+        if trader.wallet.paddle_1['previous'] != {}:
+            while ticker['last_price'] > trader.sudo_profit(trader.wallet.paddle_2['previous']['target_symbol'], trader.wallet.paddle_2['previous']['source_symbol']) :
+                time.sleep(int(trader.config['main']['interval']))
+                ticker = trader.ticker()
+            else:
+                ticker = trader.falling_trend()
+                order = trader.buy()
+                trader.wallet.paddle_2['current'][trader.config['main']['target_symbol']] = order['total_quantity']
+                trader.wallet.paddle_2['current'][trader.config['main']['source_symbol']] = order['avg_price']
         else:
             ticker = trader.falling_trend()
             order = trader.buy()

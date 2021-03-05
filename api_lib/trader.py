@@ -43,7 +43,7 @@ class Trader():
                 response[self.ticker_id][key] = float(response[self.ticker_id][key])
             except:
                 logging.debug("Non float value.")
-        logging.info("Ticker : {}".format(response[self.ticker_id]['last_price']))
+        logging.debug("Ticker : {}".format(response[self.ticker_id]['last_price']))
         return response[self.ticker_id]
     
     def falling_trend(self):
