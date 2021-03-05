@@ -61,4 +61,6 @@ Generate api key from coin dcx account settings.
 - [ ] auto calculate paddle amount.
 - [x] paddle strategy grooming
 - [ ] auto detect rising trend while buying to buy quickly
-
+- [ ] save previous wallet in a file and load if available
+- [ ] add beeper or text-to-speech after placing successfull orders
+ 
