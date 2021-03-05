@@ -43,6 +43,7 @@ class Trader():
                 response[self.ticker_id][key] = float(response[self.ticker_id][key])
             except:
                 logging.debug("Non float value.")
+        logging.info("Ticker : {}".format(response[self.ticker_id]['last_price']))
         return response[self.ticker_id]
     
     def falling_trend(self):
@@ -75,8 +76,6 @@ class Trader():
 
 
     def init_wallet(self):
-        # Total money source
-        # Total money target
         balance_url = self.config['individual']['base_url'] + self.config['individual']['balances']
         timeStamp = int(round(time.time() * 1000))
         body = {"timestamp" : timeStamp}
@@ -156,6 +155,7 @@ class Trader():
         }
         json_body = json.dumps(body, separators = (',', ':'))
         response = dcx_post(status_url, self.key, self.xauth_sign(json_body), json_body)
+        logging.info("DCX : {}".format(json.dumps(response)))
         return response['status']
 
     def buy(self):
@@ -176,6 +176,7 @@ class Trader():
         status = self.order_status(order_id)
         while status not in ['filled','rejected']:            
             time.sleep(1)
+            status = self.order_status(order_id)
         if status == 'rejected':
             self.buy()
             return
@@ -200,6 +201,7 @@ class Trader():
         status = self.order_status(order_id)
         while status not in ['filled','rejected']:            
             time.sleep(1)
+            status = self.order_status(order_id)
         if status == 'rejected':
             self.sell()
             return
