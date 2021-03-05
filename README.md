@@ -63,4 +63,5 @@ Generate api key from coin dcx account settings.
 - [ ] auto detect rising trend while buying to buy quickly
 - [ ] save previous wallet in a file and load if available
 - [ ] add beeper or text-to-speech after placing successfull orders
+- [ ] fix start with BUY paddle print
  
