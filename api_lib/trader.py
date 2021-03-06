@@ -17,7 +17,6 @@ class Trader():
         self.key = self.config['individual']['api_key']
         self.secret = self.config['individual']['secret_key']
         logging.info("Creating a Wallet for trading agent.")
-        self.ticker_id = -1
         self.wallet = Wallet()
         self.paddle = 0
         self.init_wallet()
@@ -30,22 +29,21 @@ class Trader():
     def ticker(self):
         ticker_url = self.config['public']['public_base_url'] + self.config['public']['ticker']
         response = dcx_get(ticker_url)
-        if self.ticker_id < 0:
-            for i in range(len(response)):
-                if response[i]['market'] == self.config['main']['target_symbol'] + self.config['main']['source_symbol']:
-                    self.ticker_id = i
-                    
-                    break
-        if self.ticker_id < 0:
+        ticker_id = -1
+        for i in range(len(response)):
+            if response[i]['market'] == self.config['main']['target_symbol'] + self.config['main']['source_symbol']:
+                ticker_id = i
+                break
+        if ticker_id < 0:
             logging.error("Invalid Target symbol and Source symbol. Check configurations.")
             sys.exit()
-        for key in response[self.ticker_id]:
+        for key in response[ticker_id]:
             try:
-                response[self.ticker_id][key] = float(response[self.ticker_id][key])
+                response[ticker_id][key] = float(response[self.ticker_id][key])
             except:
                 logging.debug("Non float value.")
         logging.debug("Ticker : {}".format(response[self.ticker_id]['last_price']))
-        return response[self.ticker_id]
+        return response[ticker_id]
     
     def falling_trend(self):
         logging.info("Falling trend with {}secs interval".format(self.config['main']['trend']))
