@@ -6,6 +6,7 @@ from pprint import pprint
 import logging
 import sys
 from api_lib.precision import round_down, round_up
+from utils import tidy2
 
 class Trader():
 
@@ -60,6 +61,7 @@ class Trader():
                 return ticker_new
             logging.info("sleeping for {}".format(int(self.config['main']['trend'])))
             time.sleep(int(self.config['main']['trend']))
+            tidy2()
             ticker_old = ticker_new
     
     def rising_trend(self):
@@ -76,6 +78,7 @@ class Trader():
                 return ticker_new
             logging.info("sleeping for {}".format(int(self.config['main']['trend'])))
             time.sleep(int(self.config['main']['trend']))
+            tidy2()
             ticker_old = ticker_new
 
 
