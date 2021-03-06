@@ -64,4 +64,5 @@ Generate api key from coin dcx account settings.
 - [ ] save previous wallet in a file and load if available
 - [ ] add beeper or text-to-speech after placing successfull orders
 - [ ] fix start with BUY paddle print
- 
+- [ ] auto calc paddle 3 and process
+- [x] libasound2-dev for beeper and tidy for console
