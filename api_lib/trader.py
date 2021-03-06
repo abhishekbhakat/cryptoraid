@@ -6,7 +6,7 @@ from pprint import pprint
 import logging
 import sys
 from api_lib.precision import round_down, round_up
-from utils import tidy2
+from utils import tidy, timer
 
 class Trader():
 
@@ -53,15 +53,15 @@ class Trader():
         print("LIVE: {}".format(ticker_old['last_price']))
         # Sleeping for 5 secs just for heads up
         logging.info("sleeping for {}".format(int(self.config['main']['trend'])))
-        time.sleep(int(self.config['main']['trend']))
+        timer(int(self.config['main']['trend']))
         while True:
             ticker_new = self.ticker()
             print("LIVE: {}".format(ticker_new['last_price']))
             if ticker_new['last_price'] > ticker_old['last_price']:
                 return ticker_new
             logging.info("sleeping for {}".format(int(self.config['main']['trend'])))
-            time.sleep(int(self.config['main']['trend']))
-            tidy2()
+            timer(int(self.config['main']['trend']))
+            tidy()
             ticker_old = ticker_new
     
     def rising_trend(self):
@@ -70,15 +70,15 @@ class Trader():
         print("LIVE: {}".format(ticker_old['last_price']))
         # Sleeping for 5 secs just for heads up
         logging.info("sleeping for {}".format(int(self.config['main']['trend'])))
-        time.sleep(int(self.config['main']['trend']))
+        timer(int(self.config['main']['trend']))
         while True:
             ticker_new = self.ticker()
             print("LIVE: {}".format(ticker_new['last_price']))
             if ticker_new['last_price'] < ticker_old['last_price']:
                 return ticker_new
             logging.info("sleeping for {}".format(int(self.config['main']['trend'])))
-            time.sleep(int(self.config['main']['trend']))
-            tidy2()
+            timer(int(self.config['main']['trend']))
+            tidy()
             ticker_old = ticker_new
 
 
@@ -153,6 +153,20 @@ class Trader():
         logging.info("Wallet initialize completed")
         return
     
+    def update_wallet(self):
+        balance_url = self.config['individual']['base_url'] + self.config['individual']['balances']
+        timeStamp = int(round(time.time() * 1000))
+        body = {"timestamp" : timeStamp}
+        json_body = json.dumps(body, separators = (',', ':'))
+        response = dcx_post(balance_url, self.key, self.xauth_sign(json_body), json_body)
+        for i in response:
+            if i['currency'] == self.config['main']['target_symbol'] :
+                self.wallet.target_balance = i
+                self.wallet.target_balance['balance'] = float(self.wallet.target_balance['balance'])
+            if i['currency'] == self.config['main']['source_symbol'] :
+                self.wallet.source_balance = i
+                self.wallet.source_balance['balance'] = float(self.wallet.source_balance['balance'])
+    
     def get_order(self, id):
         status_url = self.config['individual']['base_url'] + self.config['individual']['status']
         timeStamp = int(round(time.time() * 1000))
@@ -182,7 +196,7 @@ class Trader():
         order_id = response['orders'][0]['id']
         status = self.get_order(order_id)['status']
         while status not in ['filled','rejected']:            
-            time.sleep(1)
+            timer(1)
             status = self.get_order(order_id)['status']
         if status == 'rejected':
             self.buy()
@@ -207,7 +221,7 @@ class Trader():
         order_id = response['orders'][0]['id']
         status = self.get_order(order_id)['status']
         while status not in ['filled','rejected']:            
-            time.sleep(1)
+            timer(1)
             status = self.get_order(order_id)['status']
         if status == 'rejected':
             self.sell()

@@ -3,7 +3,7 @@ from api_lib.trader import Trader
 import time
 from art import *
 import logging
-from utils import tidy2, doublebeep
+from utils import tidy2, doublebeep, timer
 
 logging.basicConfig(level=logging.INFO)
 welcome = text2art("Cryptoraid v0.1.0")
@@ -17,6 +17,9 @@ logging.info("Watcher init")
 while True:
     # Solution Strategy
     # Place order which seems to be executing successfully, don't try to be whale.
+    trader.update_wallet()
+    with open(trader.config['logging']['wallet_log'],'wt') as f:
+        f.write(trader.wallet.__str__())
     ticker = trader.ticker()
     print("LIVE : {}".format(ticker['last_price']))
     if trader.wallet.paddle_1['current'] == {} and trader.wallet.paddle_2['current'] != {}:
@@ -26,7 +29,7 @@ while True:
             while ticker['last_price'] > trader.sudo_profit(trader.wallet.paddle_1['previous'][trader.config['main']['target_symbol']], trader.wallet.paddle_1['previous'][trader.config['main']['source_symbol']]) :
                 print("Expected buy at {}".format(trader.sudo_profit(trader.wallet.paddle_1['previous'][trader.config['main']['target_symbol']], trader.wallet.paddle_1['previous'][trader.config['main']['source_symbol']])))
                 logging.info("sleeping for {}".format(int(trader.config['main']['interval'])))
-                time.sleep(int(trader.config['main']['interval']))
+                timer(int(trader.config['main']['interval']))
                 tidy2()
                 ticker = trader.ticker()
             else:
@@ -48,7 +51,7 @@ while True:
         while trader.profit(trader.wallet.paddle_2['current'][trader.config['main']['target_symbol']]) < float(trader.config['main']['profit']) :
             print("Appx. profit = {}".format(trader.profit(trader.wallet.paddle_2['current'][trader.config['main']['target_symbol']])))
             logging.info("sleeping for {}".format(int(trader.config['main']['interval'])))
-            time.sleep(int(trader.config['main']['interval']))
+            timer(int(trader.config['main']['interval']))
             tidy2()
             ticker = trader.ticker()
         else:
@@ -67,7 +70,7 @@ while True:
             while ticker['last_price'] > trader.sudo_profit(trader.wallet.paddle_2['previous'][trader.config['main']['target_symbol']], trader.wallet.paddle_2['previous']['source_symbol']) :
                 print("Expected buy at {}".format(trader.sudo_profit(trader.wallet.paddle_2['previous'][trader.config['main']['target_symbol']], trader.wallet.paddle_2['previous']['source_symbol'])))
                 logging.info("sleeping for {}".format(int(trader.config['main']['interval'])))
-                time.sleep(int(trader.config['main']['interval']))
+                timer(int(trader.config['main']['interval']))
                 tidy2()
                 ticker = trader.ticker()
             else:
@@ -89,7 +92,7 @@ while True:
         while trader.profit(trader.wallet.paddle_1['current'][trader.config['main']['target_symbol']]) < float(trader.config['main']['profit']) :
             print("Appx. profit = {}".format(trader.profit(trader.wallet.paddle_1['current'][trader.config['main']['target_symbol']])))
             logging.info("sleeping for {}".format(int(trader.config['main']['interval'])))
-            time.sleep(int(trader.config['main']['interval']))
+            timer(int(trader.config['main']['interval']))
             tidy2()
             ticker = trader.ticker()
         else:
@@ -135,5 +138,5 @@ while True:
             trader.wallet.paddle_2['current'] = {}
     
     logging.info("sleeping for {}".format(int(trader.config['main']['interval'])))   
-    time.sleep(int(trader.config['main']['interval']))
+    timer(int(trader.config['main']['interval']))
     tidy2()
