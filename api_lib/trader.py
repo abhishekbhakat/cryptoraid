@@ -39,10 +39,10 @@ class Trader():
             sys.exit()
         for key in response[ticker_id]:
             try:
-                response[ticker_id][key] = float(response[self.ticker_id][key])
+                response[ticker_id][key] = float(response[ticker_id][key])
             except:
                 logging.debug("Non float value.")
-        logging.debug("Ticker : {}".format(response[self.ticker_id]['last_price']))
+        logging.debug("Ticker : {}".format(response[ticker_id]['last_price']))
         return response[ticker_id]
     
     def falling_trend(self):
