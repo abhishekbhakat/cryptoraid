@@ -22,7 +22,8 @@ while True:
         logging.info("Buying Paddle 1")
         pprint(trader.wallet.paddle_1)
         if trader.wallet.paddle_1['previous'] != {}:
-            while ticker['last_price'] > trader.sudo_profit(trader.wallet.paddle_1['previous'][trader.config['main']['target_symbol']], trader.wallet.paddle_1['previous'][trader.config['main']['target_symbol']]) :
+            while ticker['last_price'] > trader.sudo_profit(trader.wallet.paddle_1['previous'][trader.config['main']['target_symbol']], trader.wallet.paddle_1['previous'][trader.config['main']['source_symbol']]) :
+                print("Expected buy at {}".format(trader.sudo_profit(trader.wallet.paddle_1['previous'][trader.config['main']['target_symbol']], trader.wallet.paddle_1['previous'][trader.config['main']['source_symbol']])))
                 logging.info("sleeping for {}".format(int(trader.config['main']['interval'])))
                 time.sleep(int(trader.config['main']['interval']))
                 ticker = trader.ticker()
@@ -58,6 +59,7 @@ while True:
         pprint(trader.wallet.paddle_2)
         if trader.wallet.paddle_1['previous'] != {}:
             while ticker['last_price'] > trader.sudo_profit(trader.wallet.paddle_2['previous'][trader.config['main']['target_symbol']], trader.wallet.paddle_2['previous']['source_symbol']) :
+                print("Expected buy at {}".format(trader.sudo_profit(trader.wallet.paddle_2['previous'][trader.config['main']['target_symbol']], trader.wallet.paddle_2['previous']['source_symbol'])))
                 logging.info("sleeping for {}".format(int(trader.config['main']['interval'])))
                 time.sleep(int(trader.config['main']['interval']))
                 ticker = trader.ticker()
@@ -97,6 +99,7 @@ while True:
         trader.wallet.paddle_1['current'][trader.config['main']['source_symbol']] = order['avg_price']
 
     else:
+        print("Appx. profit = {}".format(trader.profit(trader.wallet.paddle_1['current'][trader.config['main']['target_symbol']])))
         if trader.profit(trader.wallet.paddle_1['current'][trader.config['main']['target_symbol']]) > float(trader.config['main']['profit']) :
             ticker = trader.rising_trend()
             print("Appx. profit = {}".format(trader.profit(trader.wallet.paddle_1['current'][trader.config['main']['target_symbol']])))
