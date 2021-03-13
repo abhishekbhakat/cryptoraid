@@ -4,6 +4,7 @@ import time
 from art import *
 import logging
 from utils import tidy2, doublebeep, timer, tidy
+import json
 
 logging.basicConfig(level=logging.INFO)
 welcome = text2art("Cryptoraid v0.1.0")
@@ -19,7 +20,8 @@ while True:
     # Place order which seems to be executing successfully, don't try to be whale.
     trader.update_wallet()
     with open(trader.config['logging']['wallet_log'],'wt') as f:
-        f.write(trader.wallet.__str__())
+    #     f.write(trader.wallet.__str__())
+        json.dump(trader.wallet.get(), f, indent=4)
     ticker = trader.ticker()
     print("LIVE : {}".format(ticker['last_price']))
     if trader.wallet.paddle_1['current'] == {} and trader.wallet.paddle_2['current'] != {}:
