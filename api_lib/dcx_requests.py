@@ -9,6 +9,10 @@ def dcx_post(url, key, signature, json_body):
         'X-AUTH-SIGNATURE': signature
     }
     response = requests.post(url, data = json_body, headers = headers)
+    if not response.status_code == 200:
+        print("CHECK CONNECTION")
+        time.sleep(5)
+        return dcx_post(url, key, signature, json_body)
     return response.json()
 
 
