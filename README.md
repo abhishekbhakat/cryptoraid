@@ -67,3 +67,5 @@ Generate api key from coin dcx account settings.
 - [ ] auto calc paddle 3 and process
 - [x] libasound2-dev for beeper and tidy for console
 - [ ] add proper terminator
+- [ ] manual enttry for paddle values
+- 

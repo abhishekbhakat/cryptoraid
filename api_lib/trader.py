@@ -122,23 +122,44 @@ class Trader():
             start = -1
         # 1 means start by buying ; -1 means start by sell
         if start == -1:
-            ticker = self.falling_trend()
-            self.wallet.paddle_1["previous"] = {}
-            self.wallet.paddle_1["current"] = {}
-            self.wallet.paddle_1["current"][self.config['main']['target_symbol']] = self.paddle / ticker['last_price']
-            self.wallet.paddle_1["current"][self.config['main']['source_symbol']] = ticker['last_price']
-            
-            self.wallet.paddle_2["previous"] = {}
-            self.wallet.paddle_2["current"] = {}
-            self.wallet.paddle_2["current"][self.config['main']['target_symbol']] = self.paddle / ticker['last_price']
-            self.wallet.paddle_2["current"][self.config['main']['source_symbol']] = ticker['last_price']
+            choice = input("Auto Choose paddle Values? [yN] ")
+            if choice.upper() in ['Y', 'YES']:
+                ticker = self.falling_trend()
+                self.wallet.paddle_1["previous"] = {}
+                self.wallet.paddle_1["current"] = {}
+                self.wallet.paddle_1["current"][self.config['main']['target_symbol']] = self.paddle / ticker['last_price']
+                self.wallet.paddle_1["current"][self.config['main']['source_symbol']] = ticker['last_price']
+                
+                self.wallet.paddle_2["previous"] = {}
+                self.wallet.paddle_2["current"] = {}
+                self.wallet.paddle_2["current"][self.config['main']['target_symbol']] = self.paddle / ticker['last_price']
+                self.wallet.paddle_2["current"][self.config['main']['source_symbol']] = ticker['last_price']
+            else:
+                paddle_1_source = float(input("Enter ticker previously bought at for paddle 1 : "))
+                paddle_2_source = float(input("Enter ticker previously bought at for paddle 2 : "))
+                self.wallet.paddle_1["current"] = {}
+                self.wallet.paddle_1["previous"] = {}
+                self.wallet.paddle_1["current"][self.config['main']['target_symbol']] = self.paddle / paddle_1_source
+                self.wallet.paddle_1["current"][self.config['main']['source_symbol']] = paddle_1_source
+                self.wallet.paddle_2["current"] = {}
+                self.wallet.paddle_2["previous"] = {}
+                self.wallet.paddle_2["current"][self.config['main']['target_symbol']] = self.paddle / paddle_2_source
+                self.wallet.paddle_2["current"][self.config['main']['source_symbol']] = paddle_2_source
 
         else:
-            ticker = self.falling_trend()
-            self.wallet.paddle_1["previous"] = {}
-            self.wallet.paddle_1["current"] = {}
-            self.wallet.paddle_1["current"][self.config['main']['target_symbol']] = self.paddle / ticker['last_price']
-            self.wallet.paddle_1["current"][self.config['main']['source_symbol']] = ticker['last_price']
+            choice = input("Auto Choose paddle Values? [yN] ")
+            if choice.upper() in ['Y', 'YES']:
+                ticker = self.falling_trend()
+                self.wallet.paddle_1["previous"] = {}
+                self.wallet.paddle_1["current"] = {}
+                self.wallet.paddle_1["current"][self.config['main']['target_symbol']] = self.paddle / ticker['last_price']
+                self.wallet.paddle_1["current"][self.config['main']['source_symbol']] = ticker['last_price']
+            else:
+                paddle_1_source = float(input("Enter ticker previously bought at for paddle 1 : "))
+                self.wallet.paddle_1["current"] = {}
+                self.wallet.paddle_1["previous"] = {}
+                self.wallet.paddle_1["current"][self.config['main']['target_symbol']] = self.paddle / paddle_1_source
+                self.wallet.paddle_1["current"][self.config['main']['source_symbol']] = paddle_1_source
 
             self.wallet.paddle_2["previous"] = {}
             self.wallet.paddle_2["current"] = {}
