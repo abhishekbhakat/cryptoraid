@@ -167,7 +167,7 @@ class Trader():
         print("Paddle 1:")
         pprint(self.wallet.paddle_1)
         print("Paddle 2:")
-        pprint(self.wallet.paddle_1)
+        pprint(self.wallet.paddle_2)
 
         logging.info("Wallet initialize completed")
         return
