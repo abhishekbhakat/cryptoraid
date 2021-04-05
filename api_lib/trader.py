@@ -1,5 +1,4 @@
 from api_lib.wallet import Wallet
-import configparser
 import hmac, json, hashlib, time
 from api_lib.dcx_requests import dcx_get, dcx_post
 from pprint import pprint 
@@ -10,10 +9,8 @@ from utils import tidy, timer
 
 class Trader():
 
-    def __init__(self, configpath):
-        logging.info("Reading config from {}".format(configpath))
-        self.config = configparser.ConfigParser()
-        self.config.read(configpath)
+    def __init__(self, config):
+        self.config = config
         self.key = self.config['individual']['api_key']
         self.secret = self.config['individual']['secret_key']
         logging.info("Creating a Wallet for trading agent.")
@@ -96,7 +93,7 @@ class Trader():
         
         logging.info("Source balance: {}".format(self.wallet.source_balance))
         logging.info("Target balance: {}".format(self.wallet.target_balance))
-        print("Starting 3-way paddle strategy")
+        print("Starting 4-way paddle strategy")
         print("Decide the paddle source_amount. (Suggested to refer previous transactions)")
         ticker = self.ticker()
         # pprint(ticker)
@@ -105,6 +102,7 @@ class Trader():
         # if choice.upper() in ['Y', 'YES']:
         #     logging.warn("Feature not yet implemented.")
         print("First 2 paddles are for spot trading. May include a little risk but higher the investment higher the profit. 3rd paddle is to sit for riding the wave.")
+        print("Paddle 4 is for the market dip to take advantage. (Manually)")
         print("Suggested Application is to start from small paddles for spot trading.")
         try:
             self.paddle = float(input("Amount for spot trade (each paddle) in " + self.config['main']['source_symbol'] + ": "))

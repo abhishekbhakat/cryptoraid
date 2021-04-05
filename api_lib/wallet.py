@@ -9,6 +9,7 @@ class Wallet():
         self.paddle_1 = {}
         self.paddle_2 = {}
         self.paddle_3 = {}
+        self.paddle_4 = {}
     
     def __str__(self) -> str:
         status = {}
@@ -17,6 +18,7 @@ class Wallet():
         status['Paddle-1'] = self.paddle_1
         status['Paddle-2'] = self.paddle_2
         status['Paddle-3'] = self.paddle_3
+        status['Paddle-4'] = self.paddle_4
         return json.dumps(status)
     
     def get(self):
@@ -26,5 +28,6 @@ class Wallet():
         status['Paddle-1'] = self.paddle_1
         status['Paddle-2'] = self.paddle_2
         status['Paddle-3'] = self.paddle_3
+        status['Paddle-4'] = self.paddle_4
         return status
     
