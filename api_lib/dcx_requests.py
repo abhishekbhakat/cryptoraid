@@ -2,14 +2,15 @@ import requests
 import json
 import time
 
+
 def dcx_post(url, key, signature, json_body):
     try:
         headers = {
-            'Content-Type': 'application/json',
-            'X-AUTH-APIKEY': key,
-            'X-AUTH-SIGNATURE': signature
+            "Content-Type": "application/json",
+            "X-AUTH-APIKEY": key,
+            "X-AUTH-SIGNATURE": signature,
         }
-        response = requests.post(url, data = json_body, headers = headers)
+        response = requests.post(url, data=json_body, headers=headers)
         if not response.status_code == 200:
             print("CHECK CONNECTION")
             time.sleep(5)
