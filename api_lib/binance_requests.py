@@ -6,7 +6,9 @@ import logging
 log = logging.getLogger(__name__)
 
 
-def binance_post(url: str, key: str, signature: str, body: dict = {}):
+def binance_post(
+    url: str, key: str, signature: str, body: dict = {}, params: dict = {}
+):
     log.debug("URL: " + url)
     try:
         headers = {
@@ -15,7 +17,9 @@ def binance_post(url: str, key: str, signature: str, body: dict = {}):
             "X-MBX-APIKEY": key,
         }
         body["signature"] = signature
-        response = requests.request("POST", url, data=body, headers=headers)
+        response = requests.request(
+            "POST", url, data=body, headers=headers, params=params
+        )
         if not response.status_code == 200:
             log.debug("RESPONSE : " + str(response.status_code))
             log.warning("CHECK CONNECTION")
@@ -28,7 +32,7 @@ def binance_post(url: str, key: str, signature: str, body: dict = {}):
         return binance_post(url, key, signature, body)
 
 
-def binance_get(url: str, key: str, body: dict = {}) -> dict:
+def binance_get(url: str, key: str, body: dict = {}, params: dict = {}) -> dict:
     log.debug("URL: " + url)
     try:
         headers = {
@@ -36,7 +40,9 @@ def binance_get(url: str, key: str, body: dict = {}) -> dict:
             "Accept": "application/json",
             "X-MBX-APIKEY": key,
         }
-        response = requests.request("GET", url, headers=headers, data=body)
+        response = requests.request(
+            "GET", url, headers=headers, data=body, params=params
+        )
         if not response.status_code == 200:
             log.debug("RESPONSE : " + str(response.status_code))
             log.warning("CHECK CONNECTION")
