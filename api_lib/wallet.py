@@ -19,7 +19,7 @@ class Wallet():
         status['Paddle-3'] = self.paddle_3
         return json.dumps(status)
     
-    def get(self):
+    def get(self) -> str:
         status = {}
         status['Target_balance'] = self.target_balance
         status['Source_balance'] = self.source_balance
