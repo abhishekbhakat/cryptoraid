@@ -3,11 +3,14 @@ from api_lib.trader import Trader
 import time
 from art import *
 import logging
-from utils import tidy2, doublebeep, timer, tidy
+from utils import tidy2, timer, tidy
 import json
+from configparser import ConfigParser
 
-logging.basicConfig(level=logging.INFO)
-welcome = text2art("Cryptoraid v0.1.0")
+conf = ConfigParser()
+conf.read('config.ini')
+logging.basicConfig(level=conf['core']['logging'])
+welcome = text2art("Cryptoraid v"+conf['core']['version'])
 
 logging.info("\n{}".format(welcome))
 logging.info("Creating a trading agent.")
@@ -35,13 +38,11 @@ while True:
                 tidy()
                 ticker = trader.ticker()
             else:
-                doublebeep()
                 ticker = trader.falling_trend()
                 order = trader.buy()
                 trader.wallet.paddle_1['current'][trader.config['main']['target_symbol']] = order['total_quantity']
                 trader.wallet.paddle_1['current'][trader.config['main']['source_symbol']] = order['avg_price']
         else:
-            doublebeep()
             ticker = trader.falling_trend()
             order = trader.buy()
             trader.wallet.paddle_1['current'][trader.config['main']['target_symbol']] = order['total_quantity']
@@ -57,7 +58,6 @@ while True:
             tidy()
             ticker = trader.ticker()
         else:
-            doublebeep()
             ticker = trader.rising_trend()
             print("Appx. profit = {}".format(trader.profit(trader.wallet.paddle_2['current'][trader.config['main']['target_symbol']])))
             order = trader.sell(trader.paddle/ticker['last_price'])
@@ -76,13 +76,11 @@ while True:
                 tidy()
                 ticker = trader.ticker()
             else:
-                doublebeep()
                 ticker = trader.falling_trend()
                 order = trader.buy()
                 trader.wallet.paddle_2['current'][trader.config['main']['target_symbol']] = order['total_quantity']
                 trader.wallet.paddle_2['current'][trader.config['main']['source_symbol']] = order['avg_price']
         else:
-            doublebeep()
             ticker = trader.falling_trend()
             order = trader.buy()
             trader.wallet.paddle_2['current'][trader.config['main']['target_symbol']] = order['total_quantity']
@@ -98,7 +96,6 @@ while True:
             tidy()
             ticker = trader.ticker()
         else:
-            doublebeep()
             ticker = trader.rising_trend()
             print("Appx. profit = {}".format(trader.profit(trader.wallet.paddle_1['current'][trader.config['main']['target_symbol']])))
             order = trader.sell(trader.paddle/ticker['last_price'])
@@ -109,7 +106,6 @@ while True:
     elif trader.wallet.paddle_1['current'] == {} and trader.wallet.paddle_2['current'] == {}:
         logging.info("Buying paddle 1 as both are empty")
         pprint(trader.wallet.paddle_1)
-        doublebeep()
         ticker = trader.falling_trend()
         order = trader.buy()
         trader.wallet.paddle_1['current'][trader.config['main']['target_symbol']] = order['total_quantity']
@@ -118,7 +114,6 @@ while True:
     else:
         print("Appx. profit = {}".format(trader.profit(trader.wallet.paddle_1['current'][trader.config['main']['target_symbol']])))
         if trader.profit(trader.wallet.paddle_1['current'][trader.config['main']['target_symbol']]) > float(trader.config['main']['profit']) :
-            doublebeep()
             ticker = trader.rising_trend()
             print("Appx. profit = {}".format(trader.profit(trader.wallet.paddle_1['current'][trader.config['main']['target_symbol']])))
             logging.info("Selling Paddle 1")
@@ -129,7 +124,6 @@ while True:
             trader.wallet.paddle_1['current'] = {}
 
         elif trader.profit(trader.wallet.paddle_2['current'][trader.config['main']['target_symbol']]) > float(trader.config['main']['profit']):
-            doublebeep()
             ticker = trader.rising_trend()
             print("Appx. profit = {}".format(trader.profit(trader.wallet.paddle_2['current'][trader.config['main']['target_symbol']])))
             logging.info("Selling Paddle 1")

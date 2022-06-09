@@ -1,7 +1,7 @@
 # CryptoRaid
 
 ## API KEY
-Generate api key from coin dcx account settings.
+Generate api key from broker account settings.
 
 ## DOC
 ### Terminology
@@ -58,14 +58,15 @@ Generate api key from coin dcx account settings.
 - [x] create trading agent
 - [x] wallet initialize
 - [ ] minimum transaction amount of source
-- [ ] auto calculate paddle amount.
+- [ ] auto calculate paddle amount[INVALID|RISKY].
 - [x] paddle strategy grooming
 - [ ] auto detect rising trend while buying to buy quickly
-- [ ] save previous wallet in a file and load if available
-- [ ] add beeper or text-to-speech after placing successfull orders
+- [x] save previous wallet in a file and load if available
+- [x] add beeper or text-to-speech after placing successfull orders[INVALID]
 - [ ] fix start with BUY paddle print
 - [ ] auto calc paddle 3 and process
 - [x] libasound2-dev for beeper and tidy for console
 - [ ] add proper terminator
-- [ ] manual enttry for paddle values
-- 
+- [x] manual entry for paddle values
+- [ ] Adding BINANCE API
+- [ ] Add setup for module

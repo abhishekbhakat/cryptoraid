@@ -1,5 +1,4 @@
 import sys
-from beepy import beep
 import time
 
 CURSOR_UP_ONE = '\x1b[1A' 
@@ -20,9 +19,6 @@ def tidy():
     sys.stdout.write(CURSOR_UP_ONE) 
     sys.stdout.write(ERASE_LINE)
 
-def doublebeep():
-    beep(sound=1)
-    beep(sound='coin')
 
 def timer(sec = 0):
     for i in range(sec,0,-1):

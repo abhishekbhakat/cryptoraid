@@ -1,3 +1,2 @@
-requests==2.25.1
-beepy==1.0.7
-art==5.1
+requests==2.27.1
+art==5.6
