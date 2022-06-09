@@ -1,3 +1,4 @@
+from unicodedata import decimal
 from api_lib.binance_requests import binance_post, binance_get
 from configparser import ConfigParser
 import hmac, json, hashlib, time, logging
@@ -21,5 +22,21 @@ def exhange_info(symbol: str) -> dict:
     return binance_get(url, key, params=params)
 
 
-resp = exhange_info('ETHUSDT')
+def ticker(symbol: str) -> dict:
+    url = conf["binance"]["base_url"] + conf["binance"]["ticker"]
+    key = conf["binance"]["api_key"]
+    params = {"symbol": symbol}
+    return float(binance_get(url, key, params=params).get("price"))
+
+
+def check_balance():
+    url = conf["binance"]["base_url"] + conf["binance"]["balances"]
+    timeStamp = int(round(time.time() * 1000))
+    body = {"timestamp": timeStamp, "type": "SPOT"}
+    key = conf["binance"]["api_key"]
+    return binance_get(url, key, body)
+
+
+resp = check_balance()
+print(type(resp))
 print(json.dumps(resp, indent=4))
