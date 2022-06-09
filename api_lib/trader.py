@@ -2,7 +2,6 @@ from api_lib.wallet import Wallet
 import configparser
 import hmac, json, hashlib, time
 from api_lib.dcx_requests import dcx_get, dcx_post
-from pprint import pprint
 import logging
 import sys
 from api_lib.precision import round_down, round_up
@@ -234,9 +233,9 @@ class Trader:
             self.wallet.paddle_2["current"] = {}
 
         print("Paddle 1:")
-        pprint(self.wallet.paddle_1)
+        print(json.dumps(self.wallet.paddle_1, indent=4))
         print("Paddle 2:")
-        pprint(self.wallet.paddle_2)
+        print(json.dumps(self.wallet.paddle_2, indent=4))
 
         logging.info("Wallet initialize completed")
         return
